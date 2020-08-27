@@ -1,5 +1,4 @@
-const REV = 6,
-       BRUSHES = ["sketchy", "shaded", "chrome", "fur", "longfur", "web", "", "simple", "squares", "ribbon", "", "circles", "grid"],
+var BRUSHES = ["sketchy", "shaded", "chrome", "fur", "longfur", "web", "", "simple", "squares", "ribbon", "", "circles", "grid"],
        USER_AGENT = navigator.userAgent.toLowerCase();
 
 var SCREEN_WIDTH = window.innerWidth,
@@ -171,7 +170,7 @@ function restoreImageFromLocalstorage(imgData){
 	if (!imgData)
 		return
 
-	let localStorageImage = new Image();
+	var localStorageImage = new Image();
 
 	localStorageImage.addEventListener("load", function(event)
 	{
@@ -322,7 +321,7 @@ function onForegroundColorSelectorChange( event )
 {
 	COLOR = foregroundColorSelector.getColor();
 	
-	menu.setForegroundColor( COLOR );
+	menu.setColor( menu.foregroundColor, COLOR );
 
 	if (STORAGE)
 	{
@@ -336,7 +335,7 @@ function onBackgroundColorSelectorChange( event )
 {
 	BACKGROUND_COLOR = backgroundColorSelector.getColor();
 	
-	menu.setBackgroundColor( BACKGROUND_COLOR );
+	menu.setColor( menu.backgroundColor, BACKGROUND_COLOR );
 	
 	document.body.style.backgroundColor = 'rgb(' + BACKGROUND_COLOR[0] + ', ' + BACKGROUND_COLOR[1] + ', ' + BACKGROUND_COLOR[2] + ')';
 	
