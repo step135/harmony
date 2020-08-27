@@ -13,19 +13,20 @@ Menu.prototype = {
 	about: null,
 
 	init() {
+		var separator = " | ", space = " ";
 		this.container = this.createContainer();
 		this.undo = this.appendButton('Undo');
-		this.appendTextNode(" | ");
+		this.appendTextNode(separator);
 		this.foregroundColor = this.appendColorSelectorCanvas(COLOR);
-		this.appendTextNode(" ");
+		this.appendTextNode(space);
 		this.backgroundColor = this.appendColorSelectorCanvas(BACKGROUND_COLOR);
-		this.appendTextNode(" ");
+		this.appendTextNode(space);
 		this.selector = this.appendBrushesSelector();
-		this.appendTextNode(" ");
+		this.appendTextNode(separator);
 		this.save = this.appendButton('Save');
-		this.appendTextNode(" ");
+		this.appendTextNode(space);
 		this.clear = this.appendButton('Clear');
-		this.appendTextNode(" | ");
+		this.appendTextNode(separator);
 		this.about = this.appendButton('About');
 	},
 	
@@ -39,14 +40,12 @@ Menu.prototype = {
 
 	appendBrushesSelector() {
 		var select = document.createElement("select");
-		for (var i = 0; i < BRUSHES.length; i++)
-		{
+		for (var i = 0; i < BRUSHES.length; i++) {
 			var option = document.createElement("option");
 			option.id = i;
 			option.innerHTML = BRUSHES[i].toUpperCase();
 			select.appendChild(option);
 		}
-
 		this.container.appendChild(select);
 		return select
 	},
