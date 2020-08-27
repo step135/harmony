@@ -6,7 +6,9 @@ function Menu()
 Menu.prototype = 
 {
 	container: null,
-	
+
+	undo: null,
+
 	foregroundColor: null,
 	backgroundColor: null,
 	
@@ -23,7 +25,16 @@ Menu.prototype =
 		this.container.className = 'gui';
 		this.container.style.position = 'absolute';
 		this.container.style.top = '0px';
-		
+
+
+		this.undo = document.createElement("span"); //getElementById('save');
+		this.undo.className = 'button';
+		this.undo.innerHTML = 'UNDO';
+		this.container.appendChild(this.undo);
+
+		space = document.createTextNode(" ");
+		this.container.appendChild(space);
+
 		this.foregroundColor = document.createElement("canvas");
 		this.foregroundColor.style.marginBottom = '-3px';
 		this.foregroundColor.style.cursor = 'pointer';

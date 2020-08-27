@@ -10,7 +10,7 @@ var SCREEN_WIDTH = window.innerWidth,
     BACKGROUND_COLOR = [250, 250, 250],
     STORAGE = window.localStorage,
     brush,
-    saveTimeOut,
+    // saveTimeOut,
     wacom,
     i,
     mouseX = 0,
@@ -28,13 +28,14 @@ var SCREEN_WIDTH = window.innerWidth,
     isAboutVisible = false,
     isMenuMouseOver = false,
     shiftKeyIsDown = false,
-    altKeyIsDown = false;
+    altKeyIsDown = false,
+	statesStack = [];
 
 init();
 
 function init()
 {
-	var hash, palette, embed, localStorageImage;
+	var hash, palette, embed;
 	
 	if (USER_AGENT.search("android") > -1 || USER_AGENT.search("iphone") > -1)
 		BRUSH_SIZE = 2;	
@@ -94,25 +95,17 @@ function init()
 	menu.clear.addEventListener('touchend', onMenuClear, false);
 	menu.about.addEventListener('click', onMenuAbout, false);
 	menu.about.addEventListener('touchend', onMenuAbout, false);
+	menu.undo.addEventListener('click', undo, false);
+	menu.undo.addEventListener('touchend', undo, false);
 	menu.container.addEventListener('mouseover', onMenuMouseOver, false);
 	menu.container.addEventListener('mouseout', onMenuMouseOut, false);
 	container.appendChild(menu.container);
 
 	if (STORAGE)
 	{
-		if (localStorage.canvas)
-		{
-			localStorageImage = new Image();
-		
-			localStorageImage.addEventListener("load", function(event)
-			{
-				localStorageImage.removeEventListener(event.type, arguments.callee, false);
-				context.drawImage(localStorageImage,0,0);
-			}, false);
-			
-			localStorageImage.src = localStorage.canvas;			
-		}
-		
+
+		restoreImageFromLocalstorage(localStorage.canvas)
+
 		if (localStorage.brush_color_red)
 		{
 			COLOR[0] = localStorage.brush_color_red;
@@ -173,6 +166,31 @@ function init()
 	onWindowResize(null);
 }
 
+
+function restoreImageFromLocalstorage(imgData){
+	if (!imgData)
+		return
+
+	let localStorageImage = new Image();
+
+	localStorageImage.addEventListener("load", function(event)
+	{
+		localStorageImage.removeEventListener(event.type, arguments.callee, false);
+		context.clearRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+		context.drawImage(localStorageImage,0,0);
+	}, false);
+
+	localStorageImage.src = imgData;
+}
+
+function undo(){
+	if (!statesStack.length)
+		return
+
+	restoreImageFromLocalstorage(statesStack.pop())
+	console.log('available undo steps ',statesStack.length)
+	console.log('total undo memory used', statesStack.join('').length)
+}
 
 // WINDOW
 
@@ -398,6 +416,7 @@ function onMenuClear()
 	context.clearRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	saveToLocalStorage();
+	statesStack = []
 
 	brush.destroy();
 	brush = eval("new " + BRUSHES[menu.selector.selectedIndex] + "(context)");
@@ -418,7 +437,7 @@ function onCanvasMouseDown( event )
 {
 	var data, position;
 
-	clearTimeout(saveTimeOut);
+	// clearTimeout(saveTimeOut);
 	cleanPopUps();
 	
 	if (altKeyIsDown)
@@ -448,17 +467,26 @@ function onCanvasMouseMove( event )
 	brush.stroke( event.clientX, event.clientY );
 }
 
-function onCanvasMouseUp()
+function onCanvasMouseUp(savePrevState)
 {
 	brush.strokeEnd();
 	
 	window.removeEventListener('mousemove', onCanvasMouseMove, false);
 	window.removeEventListener('mouseup', onCanvasMouseUp, false);
-	
+
+
+	if (savePrevState)
+	{
+		statesStack.push(localStorage.canvas);
+		if (statesStack.length === 100)
+			statesStack.shift();
+
+		console.log('total undo memory used', statesStack.join('').length)
+	}
+
 	if (STORAGE)
 	{
-		clearTimeout(saveTimeOut);
-		saveTimeOut = setTimeout(saveToLocalStorage, 2000, true);
+		saveToLocalStorage();
 	}
 }
 
