@@ -378,9 +378,16 @@ function onMenuMouseOut()
 
 function onMenuSave()
 {
-	// window.open(canvas.toDataURL('image/png'),'mywindow');
+
 	flatten();
-	window.open(flattenCanvas.toDataURL('image/png'),'mywindow');
+
+	var link = document.createElement('a');
+	link.download = 'harmony_' + new Date().toUTCString()
+		.replace(',','')
+		.split(' ')
+		.join('_') + '.png';
+	link.href = flattenCanvas.toDataURL()
+	link.click();
 }
 
 function onMenuClear()
