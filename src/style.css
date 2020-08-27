@@ -37,6 +37,7 @@ hr
     text-transform: uppercase;
     line-height: 18px;
     cursor: default;
+    user-select: none;
 }
 
 .button
