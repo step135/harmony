@@ -30,7 +30,7 @@ var SCREEN_WIDTH = window.innerWidth,
     altKeyIsDown = false,
 	statesStack = [];
 
-init();
+setTimeout(init, 1000)
 
 function init()
 {
