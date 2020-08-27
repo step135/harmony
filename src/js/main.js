@@ -84,18 +84,12 @@ function init()
 	
 	menu = new Menu();
 	menu.foregroundColor.addEventListener('click', onMenuForegroundColor, false);
-	menu.foregroundColor.addEventListener('touchend', onMenuForegroundColor, false);
 	menu.backgroundColor.addEventListener('click', onMenuBackgroundColor, false);
-	menu.backgroundColor.addEventListener('touchend', onMenuBackgroundColor, false);
 	menu.selector.addEventListener('change', onMenuSelectorChange, false);
 	menu.save.addEventListener('click', onMenuSave, false);
-	menu.save.addEventListener('touchend', onMenuSave, false);
 	menu.clear.addEventListener('click', onMenuClear, false);
-	menu.clear.addEventListener('touchend', onMenuClear, false);
 	menu.about.addEventListener('click', onMenuAbout, false);
-	menu.about.addEventListener('touchend', onMenuAbout, false);
 	menu.undo.addEventListener('click', undo, false);
-	menu.undo.addEventListener('touchend', undo, false);
 	menu.container.addEventListener('mouseover', onMenuMouseOver, false);
 	menu.container.addEventListener('mouseout', onMenuMouseOut, false);
 	container.appendChild(menu.container);
@@ -466,6 +460,14 @@ function onCanvasMouseMove( event )
 	brush.stroke( event.clientX, event.clientY );
 }
 
+function saveState() {
+	statesStack.push(localStorage.canvas);
+	if (statesStack.length === 100)
+		statesStack.shift();
+
+	console.log('total undo memory used', statesStack.join('').length)
+}
+
 function onCanvasMouseUp(savePrevState)
 {
 	brush.strokeEnd();
@@ -476,11 +478,7 @@ function onCanvasMouseUp(savePrevState)
 
 	if (savePrevState)
 	{
-		statesStack.push(localStorage.canvas);
-		if (statesStack.length === 100)
-			statesStack.shift();
-
-		console.log('total undo memory used', statesStack.join('').length)
+		saveState();
 	}
 
 	if (STORAGE)
@@ -521,11 +519,20 @@ function onCanvasTouchEnd( event )
 	if(event.touches.length == 0)
 	{
 		event.preventDefault();
-		
+
+		saveState()
+
 		brush.strokeEnd();
 
 		window.removeEventListener('touchmove', onCanvasTouchMove, false);
 		window.removeEventListener('touchend', onCanvasTouchEnd, false);
+
+		saveState();
+
+		if (STORAGE)
+		{
+			saveToLocalStorage();
+		}
 	}
 }
 
