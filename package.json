@@ -1,7 +1,7 @@
 {
   "name": "harmony",
   "version": "1.0.0",
-  "release": "2b6123cd4d4939d9003144f287ae73dab775fcc3",
+  "release": "550b0fe7b06420fa6918f44875c630cc0efc14e2",
   "description": "simple art tool",
   "main": "index.js",
   "scripts": {
