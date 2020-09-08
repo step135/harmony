@@ -1,5 +1,5 @@
 
-DEMO: https://strangerintheq.github.io/harmony/index.html
+DEMO: https://strangerintheq.github.io/harmony/
 
 forked from https://github.com/mrdoob/harmony
 
